@@ -1,6 +1,10 @@
 {
-  "name": "run-check",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module"
+  "name": "...",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run --reporter=verbose"
+  },
+  "devDependencies": {
+    "vitest": "^x.y.z"
+  }
 }
