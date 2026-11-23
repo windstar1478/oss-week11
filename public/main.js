@@ -7,13 +7,7 @@
 // 실행: P0 ~ P3 은 npx serve public, P4 부터는 npm start → 브라우저에서 http://localhost:3000
 // 커밋 메시지: p5: forecast
 import { getForecast } from "./api.js";
-import { toDays, isGoodDay, summarize, reasons } from "./logic.js";
-
-const CITIES = {
-  seoul: { name: "Seoul", lat: 37.566, lon: 126.9784 },
-  daejeon: { name: "Daejeon", lat: 36.3504, lon: 127.3845 },
-  gangneung: { name: "Gangneung", lat: 37.7519, lon: 128.8761 },
-};
+import { isGoodDay, summarize, reasons } from "./logic.js";
 
 // P1. 요소는 처음에 한 번만 찾아 둠. 선택자 오타면 null 이 되고,
 // 나중에 statusEl.textContent 에서 "Cannot set properties of null" 로 터짐.
@@ -56,7 +50,7 @@ function dayRow(day) {
 
 function render() {
   summaryEl.textContent = state.city
-    ? `${state.city.name}: ${summarize(state.days, state.limits)}.`
+    ? `${state.city}: ${summarize(state.days, state.limits)}.`
     : "";
   // append 만 하면 Check 를 누를 때마다 줄이 7개씩 쌓임. 통째로 갈아 끼움.
   rowsEl.replaceChildren(...state.days.map(dayRow));
@@ -66,13 +60,12 @@ function render() {
 // min/max/required 검사도 submit 쪽에서 일어남.
 form.addEventListener("submit", async (event) => {
   event.preventDefault(); // 안 하면 페이지가 새로 고쳐져서 주소가 /? 로 바뀌고 아무것도 안 남음
-  const city = CITIES[citySelect.value];
   statusEl.textContent = "Loading...";
   statusEl.classList.remove("error");
   try {
-    const daily = await getForecast(city);
+    const { city, days } = await getForecast(citySelect.value);
     state.city = city;
-    state.days = toDays(daily);
+    state.days = days;
     statusEl.textContent = "";
   } catch (err) {
     // 실패하면 state 를 그대로 둠. 이전 도시 표가 남는 게 빈 화면보다 나음.
